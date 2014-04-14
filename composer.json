@@ -4,7 +4,11 @@
 	"keywords": ["framework", "laravel"],
 	"license": "MIT",
 	"require": {
-		"laravel/framework": "4.1.*"
+		"laravel/framework": "4.1.*", 
+		"loic-sharma/profiler": "1.1.*",
+		"cartalyst/sentry":"2.1.*",
+		"way/generators": "dev-master",
+		"kalnoy/cruddy": "1.0.*@dev"
 	},
 	"autoload": {
 		"classmap": [
@@ -14,12 +18,20 @@
 			"app/database/migrations",
 			"app/database/seeds",
 			"app/tests/TestCase.php"
-		]
+		],
+		"psr-0": {
+				"URB\\":"app/"
+		}
 	},
 	"scripts": {
 		"post-install-cmd": [
 			"php artisan clear-compiled",
-			"php artisan optimize"
+			"php artisan optimize",
+			"php artisan migrate --package=cartalyst/sentry",
+			"php artisan config:publish cartalyst/sentry",
+			"php artisan config:publish kalnoy/cruddy",
+			"php artisan asset:publish kalnoy/cruddy",
+			"php artisan migrate"
 		],
 		"post-update-cmd": [
 			"php artisan clear-compiled",
@@ -32,5 +44,5 @@
 	"config": {
 		"preferred-install": "dist"
 	},
-	"minimum-stability": "stable"
+	"minimum-stability": "dev"
 }
