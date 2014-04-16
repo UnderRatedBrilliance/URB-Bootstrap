@@ -13,5 +13,7 @@
 
 Route::get('/', function()
 {
-	return View::make('hello');
+	$posts = App::make('PostsRepository')->model->with(array('User'))->get();
+	return $posts;
+	//return View::make('hello');
 });

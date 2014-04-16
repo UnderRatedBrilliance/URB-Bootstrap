@@ -120,7 +120,8 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Cartalyst\Sentry\SentryServiceProvider',
-		'Kalnoy\Cruddy\CruddyServiceProvider'
+		'Way\Generators\GeneratorsServiceProvider',
+		'URB\Core\URBServiceProvider'
 
 	),
 

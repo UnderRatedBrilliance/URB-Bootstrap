@@ -7,8 +7,7 @@
 		"laravel/framework": "4.1.*", 
 		"loic-sharma/profiler": "1.1.*",
 		"cartalyst/sentry":"2.1.*",
-		"way/generators": "dev-master",
-		"kalnoy/cruddy": "1.0.*@dev"
+		"way/generators": "dev-master"
 	},
 	"autoload": {
 		"classmap": [
@@ -29,8 +28,6 @@
 			"php artisan optimize",
 			"php artisan migrate --package=cartalyst/sentry",
 			"php artisan config:publish cartalyst/sentry",
-			"php artisan config:publish kalnoy/cruddy",
-			"php artisan asset:publish kalnoy/cruddy",
 			"php artisan migrate"
 		],
 		"post-update-cmd": [
