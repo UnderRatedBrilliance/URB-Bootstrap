@@ -13,6 +13,7 @@ class URBServiceProvider extends ServiceProvider
     
     public function register()
     {
+        
         // Bind Posts Repository to IoC 
         $this->app->bind('PostsRepository', function($app)
         {

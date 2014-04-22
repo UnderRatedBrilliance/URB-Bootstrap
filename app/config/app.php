@@ -119,9 +119,13 @@ return array(
 		'Illuminate\Validation\ValidationServiceProvider',
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
+
+		// Additional Service Providers
+		'Profiler\ProfilerServiceProvider',
 		'Cartalyst\Sentry\SentryServiceProvider',
 		'Way\Generators\GeneratorsServiceProvider',
-		'URB\Core\URBServiceProvider'
+		'URB\Core\URBServiceProvider',
+		'Cviebrock\EloquentSluggable\SluggableServiceProvider',
 
 	),
 
@@ -188,7 +192,11 @@ return array(
 		'URL'             => 'Illuminate\Support\Facades\URL',
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
+
+		// Additional Facades
+		'Profiler' 		  => 'Profiler\Facades\Profiler',
 		'Sentry' 		  => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
+		'Sluggable' => 'Cviebrock\EloquentSluggable\Facades\Sluggable',
 
 	),
 

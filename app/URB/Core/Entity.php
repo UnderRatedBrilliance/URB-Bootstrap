@@ -51,16 +51,16 @@ abstract class Entity extends Model implements BaseEntityInterface
 		}
 
 		// load Validator with attributes and rules 
-		$this->validator->make($this->attributes, $this->getPreparedRules());
+		$validator = $this->validator->make($this->attributes, $this->getPreparedRules());
 
 		// Validation passes return true
-		if($this->validator->passes())
+		if($validator->passes())
 		{
 			return true;
 		}
 		
 		// If validation fails set Error Messages 
-		$this->setErrors($this->validator->messages());
+		$this->setErrors($validator->messages());
 
 		return false;
 	}
@@ -132,7 +132,7 @@ abstract class Entity extends Model implements BaseEntityInterface
     protected function buildUniqueExclusionRules(array $rules = array()) {
       
         if (!count($rules))
-          $rules = static::$rules;
+          $rules = $this->validationRules;
 
         foreach ($rules as $field => &$ruleset) {
             // If $ruleset is a pipe-separated string, switch it to array

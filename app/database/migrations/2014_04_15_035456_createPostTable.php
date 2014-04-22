@@ -20,7 +20,7 @@ class CreatePostTable extends Migration {
 			$table->text('content');
 			$table->text('excerpt');
 			$table->binary('custom_data')->nullable(); //Store additional fields
-			$table->boolean('status');
+			$table->boolean('status')->default(1);
 			
 			//Related Fields 
 			$table->integer('user_id')->unsigned();
@@ -31,10 +31,15 @@ class CreatePostTable extends Migration {
 			$table->string('meta_keywords',255);
 
 			//Meta Data
+			$table->binary('meta_data')->nullable();
+			$table->dateTime('published_date')->nullable();
 			$table->integer('last_edited_by');
+
 			$table->timestamps();
-			
 			$table->softDeletes();
+
+			//Foreign Keys
+			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 		});
 	}
 

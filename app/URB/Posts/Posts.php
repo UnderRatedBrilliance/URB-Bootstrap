@@ -1,9 +1,9 @@
 <?php namespace URB\Posts;
 
-use URB\Core\Entity;
+use URB\Core\VocalEntity;
 use \User;
 
-class Posts extends Entity
+class Posts extends VocalEntity
 {
 	/**
 	 * The database table used by the model.
@@ -17,8 +17,17 @@ class Posts extends Entity
 	*
 	* @var boolean
 	*/
-	 protected $softDelete = true;
+	protected $softDelete = true;
 
+	//Apends properties to toString and toJson output that do not have corresponding columns
+	protected $appends = array('post_url');
+
+	public static $sluggable = array(
+        'build_from' => 'title',
+        'save_to'    => 'slug',
+        'include_trashed' => true,
+    );
+    
 	 /**
 	* Attributes that are fillable by massassignment
 	*
@@ -34,18 +43,29 @@ class Posts extends Entity
 			'user_id',
 			'meta_title',
 			'meta_description',
-			'meta_keywords'
+			'meta_keywords',
+			'meta_data'
 		);
 
-	 /**
-	 * Model Validation Rules
-	 *
-	 * @return array of rules used for input sanitation and model validation
-	 */
-	 protected $validationRules = array();
+	/**
+	* Model Validation Rules
+	*
+	* @return array of rules used for input sanitation and model validation
+	*/
+	public $rules = array();
 
 	public function user()
 	{
 		return $this->belongsTo('User');
+	}
+
+	public function scopeActivePosts($query)
+	{
+		$query->where('status',1);
+	}
+	//Return Post Resolved URL
+	public function getPostUrlAttribute()
+	{
+		return route('slug', $this->slug);
 	}
 }
