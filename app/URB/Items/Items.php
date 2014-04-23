@@ -48,42 +48,45 @@ class Items extends VocalEntity
 	* Query Scope set query filter and sortby column
 	* @var \Illuminate\Database\Query
 	*/
-	public function scopeFilterAndSortBy($query,$filters = array(),$sortBy = 'id')
-	{
-		if(!empty($filters)) {
-			foreach($filters as $key => $filter) {
-				if($filter){
-					$query->where($key,'LIKE','%'.$filter.'%');
-				}				
-			}
-		}
-		return $query->orderBy($sortBy);
-	}
-
-	public function returnSalesCount($days = array())
+	public function scopeReturnSalesCount($query, $days = array())
 	{
 		if(empty($days))
 		{
 			$days = array(
-					'Sold in 7 Days' => 7,
-					'Sold in 14 Days' => 14,
-					'Sold in 30 Days' => 30,
-					'Sold in 90 Days' => 90,
-					'Sold in 180 Days' => 180,
-					'Sold in 1 Year'  => 365,
-					'Sold All Time'  => 0
+					7 =>'Sold in 7 Days',
+					14 =>'Sold in 14 Days',
+					30 =>'Sold in 30 Days',
+					90 =>'Sold in 90 Days',
+					180 =>'Sold in 180 Days',
+					365 =>'Sold in 1 Year',
+					 0  => 'Sold All Time'
 				);
 		}
-		$rawSQL = " {$this->table}.sku,";
-		foreach($days as $label=>$day)
+
+		if(!isset($days[0]))
 		{
-			$rawSQL =. "SUM(CASE WHEN orders.order_date >= {\Carbon\Carbon::createFormFormat('Y-m-d',\Carbon\Carbon::now()->subDays($day)))} THEN order_item.qty ELSE 0 END) as '{$label}',";
+			$days[0] = 'Sold All Time';
 		}
-		return $this->model->select($rawSQL))
+
+		$rawSQL = "test_product.id,test_products.sku,";
+
+		foreach($days as $day=>$label)
+		{
+			if($day == 0)
+			{
+				$rawSQL .= "SUM(CASE WHEN test_orders.order_date <= '". \Carbon\Carbon::now()->subDays($day)->format('Y-m-d')."' THEN test_order_item.qty ELSE 0 END) as '".$label."'";
+				continue;
+			}
+			$rawSQL .= "SUM(CASE WHEN test_orders.order_date >= '". \Carbon\Carbon::now()->subDays($day)->format('Y-m-d')."' THEN test_order_item.qty ELSE 0 END) as '".$label."',";
+		}
+
+			$query->select(DB::raw($rawSQL))
+			->join('order_item','products.id','=','order_item.products_id')
 			->join('orders','order_item.order_id','=','orders.id')
 			->where('orders.status',1)
-			->groupBy('sku')
-			->orderBy('sku', 'desc')
-			->get();
+			->groupBy('products.sku')
+			->orderBy('products.sku', 'asc');
+
+
 	}
 }
