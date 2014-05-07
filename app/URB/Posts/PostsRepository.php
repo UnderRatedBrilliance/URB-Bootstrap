@@ -17,6 +17,6 @@ class PostsRepository extends VocalRepository
 
 	public function getActivePosts($paginated = 20)
 	{
-		return $this->model->where('status',1)->
+		return $this->model->where('status',1)->get();
 	}
 }

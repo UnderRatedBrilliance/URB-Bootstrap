@@ -19,7 +19,7 @@ class Items extends VocalEntity
 	protected $softDelete = true;
 
 	//Apends properties to toString and toJson output that do not have corresponding columns
-	protected $appends = array();
+	protected $appends = array('sold_in_7','sold_in_14','sold_in_30','sold_in_90','sold_in_180','sold_in_year','sold_all_time');
     
 	 /**
 	* Attributes that are fillable by massassignment
@@ -35,6 +35,35 @@ class Items extends VocalEntity
 	*/
 	public $rules = array();
 
+	/*//////////////////////////////////////////////////////////////////////////
+	Model Relationships
+	//////////////////////////////////////////////////////////////////////////*/
+	public function itemsSold() {
+			return $this->hasMany('URB\Orders\OrderItems','item_id');
+		}
+	
+	/*//////////////////////////////////////////////////////////////////////////
+	Model Query Scopes
+	//////////////////////////////////////////////////////////////////////////*/
+
+	/**
+	* Query Scope filter by item attributes
+	* @var \Illuminate\Database\Query $query 
+	* @var array $filters
+	* @var mixed $sortBy - accepts both string and array of values to sort by
+	*/
+	public function scopeProductQuery($query,$filters = array(),$sortby = 'id')
+	{
+		if(!empty($filters)) {
+			foreach($filters as $key => $filter) {
+				if($filter){
+					$query->where($key,'LIKE','%'.$filter.'%');
+				}				
+			}
+		}
+		return $query->orderBy($sortby);
+	}
+
 	/**
 	* Query Scope filter query to only show active items
 	* @var \Illuminate\Database\Query
@@ -48,8 +77,10 @@ class Items extends VocalEntity
 	* Query Scope set query filter and sortby column
 	* @var \Illuminate\Database\Query
 	*/
-	public function scopeReturnSalesCount($query, $days = array())
+	public function scopeReturnSalesCount($query, $days = array(),$allSold = true)
 	{
+
+		// Default Day Values
 		if(empty($days))
 		{
 			$days = array(
@@ -63,30 +94,96 @@ class Items extends VocalEntity
 				);
 		}
 
-		if(!isset($days[0]))
+		if(!isset($days[0]) AND $allSold === true)
 		{
 			$days[0] = 'Sold All Time';
 		}
+			
+			// Retrieve database prefix to manually prefix Raw Select Queries
+			$grammar = $query->getQuery()->getGrammar();
+			$db_prefix = $grammar->getTablePrefix();
 
-		$rawSQL = "test_product.id,test_products.sku,";
 
-		foreach($days as $day=>$label)
-		{
-			if($day == 0)
+			$query->addSelect($this->getTable().'.id', $this->getTable().'.sku');
+
+			// Add Select Columns to query based on Days array
+			foreach($days as $day =>$label)
 			{
-				$rawSQL .= "SUM(CASE WHEN test_orders.order_date <= '". \Carbon\Carbon::now()->subDays($day)->format('Y-m-d')."' THEN test_order_item.qty ELSE 0 END) as '".$label."'";
+				if($day == 0)
+			{
+				$query->addSelect(DB::raw("SUM(CASE WHEN ".$db_prefix."orders.order_date <= '". \Carbon\Carbon::now()->subDays($day)->format('Y-m-d')."' THEN ".$db_prefix."order_item.qty ELSE 0 END) as '".$label."'"));
 				continue;
 			}
-			$rawSQL .= "SUM(CASE WHEN test_orders.order_date >= '". \Carbon\Carbon::now()->subDays($day)->format('Y-m-d')."' THEN test_order_item.qty ELSE 0 END) as '".$label."',";
-		}
-
-			$query->select(DB::raw($rawSQL))
-			->join('order_item','products.id','=','order_item.products_id')
+				$query->addSelect(DB::raw("SUM(CASE WHEN ".$db_prefix."orders.order_date >= '". \Carbon\Carbon::now()->subDays($day)->format('Y-m-d')."' THEN ".$db_prefix."order_item.qty ELSE 0 END) as '".$label."'"));
+				
+			}
+			
+			$query->join('order_item','items.id','=','order_item.item_id')
 			->join('orders','order_item.order_id','=','orders.id')
 			->where('orders.status',1)
-			->groupBy('products.sku')
-			->orderBy('products.sku', 'asc');
-
+			->groupBy('item.sku')
+			->orderBy('item.sku', 'asc');
+			
 
 	}
+	/*//////////////////////////////////////////////////////////////////////////
+	Model Public Methods
+	//////////////////////////////////////////////////////////////////////////*/		
+	
+	public function howManySoldIn($days = 90) {
+
+		$date = new \DateTime('today');
+		$date->modify('-'.$days.' day');
+
+		$orderItems = $this->itemsSold()->where('item_id',$this->id)
+								->join('orders','order_item.order_id','=','orders.id');
+								if(!$days == 0)
+								{
+									$orderItems = $orderItems->where('orders.order_date','>=',$date->format('Y-m-d'));
+								}
+								
+								$orderItems = $orderItems->where('orders.status',1)
+								->sum('qty');
+		return $orderItems;
+	}
+
+	/*//////////////////////////////////////////////////////////////////////////
+	Custom Virtual Attributes that are appended to the model
+	//////////////////////////////////////////////////////////////////////////*/
+
+	public function getSoldIn7Attribute()
+	{
+		return $this->howManySoldIn(7);
+	}
+
+	public function getSoldIn14Attribute()
+	{
+		return $this->howManySoldIn(14);
+	}
+
+	public function getSoldIn30Attribute()
+	{
+		return $this->howManySoldIn(30);
+	}
+
+	public function getSoldIn90Attribute()
+	{
+		return $this->howManySoldIn(90);
+	}
+
+	public function getSoldIn180Attribute()
+	{
+		return $this->howManySoldIn(180);
+	}
+
+	public function getSoldInYearAttribute()
+	{
+		return $this->howManySoldIn(365);
+	}
+
+	public function getSoldAllTimeAttribute()
+	{
+		return $this->howManySoldIn(0);
+	}
+	
 }

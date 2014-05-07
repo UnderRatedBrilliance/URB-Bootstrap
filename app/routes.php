@@ -65,6 +65,7 @@ In posuere nulla eget varius fermentum. Nam ac laoreet dolor. Donec dignissim at
 	return $posts->toJson();
 });
 
+/*
 Route::get('/{slug?}', array('as'=>'slug',function($slug)
 {
 	
@@ -72,3 +73,33 @@ Route::get('/{slug?}', array('as'=>'slug',function($slug)
 
 	return $posts->toJson();
 }));
+*/
+Route::get('/products',function()
+{
+	//$items = new URB\Items\ItemsRepository(new URB\Items\Items);
+
+	$items = App::make('ItemsRepository')->getItemsPaginated();
+	return $items;
+});
+
+Route::get('/testing',function()
+{
+	$customers = new URB\Orders\Orders;
+	var_dump($app);
+	var_dump($customers->app);
+	return $customers->find(35983)->billing_address;
+});
+
+
+/*//////////////////////////////////////////////////////////////////////////
+	Extending FrozenNode/Administrator Routes
+//////////////////////////////////////////////////////////////////////////*/		
+
+Route::group(array('prefix' => Config::get('administrator::administrator.uri'), 'before' => 'validate_admin'), function()
+{
+	//Get Item Display Full Page
+		Route::get('{model}/{id}/full', array(
+			'as' => 'admin_get_item_full',
+			'uses' => 'URB\Admin\Controllers\UrbAdminController@showFull'
+		));
+});

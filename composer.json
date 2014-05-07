@@ -9,7 +9,9 @@
 		"cartalyst/sentry":"2.1.*",
 		"way/generators": "dev-master",
 		"cviebrock/eloquent-sluggable": "1.0.*",
-		"lakedawson/vocal": "0.1.*"
+		"lakedawson/vocal": "0.1.*",
+		"frozennode/administrator": "dev-master",
+		"mnshankar/CSV": "dev-master"
 	},
 	"autoload": {
 		"classmap": [
@@ -21,7 +23,7 @@
 			"app/tests/TestCase.php"
 		],
 		"psr-0": {
-				"URB\\":"app/"
+				"URB":"app/"
 		}
 	},
 	"scripts": {

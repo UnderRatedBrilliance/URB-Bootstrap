@@ -126,6 +126,8 @@ return array(
 		'Way\Generators\GeneratorsServiceProvider',
 		'URB\Core\URBServiceProvider',
 		'Cviebrock\EloquentSluggable\SluggableServiceProvider',
+		'Frozennode\Administrator\AdministratorServiceProvider',
+		'mnshankar\CSV\CSVServiceProvider',
 
 	),
 
@@ -197,6 +199,7 @@ return array(
 		'Profiler' 		  => 'Profiler\Facades\Profiler',
 		'Sentry' 		  => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
 		'Sluggable' => 'Cviebrock\EloquentSluggable\Facades\Sluggable',
+		'CSV'             =>'mnshankar\CSV\CSVFacade',
 
 	),
 

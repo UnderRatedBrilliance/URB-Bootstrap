@@ -16,9 +16,13 @@ abstract class VocalRepository implements BaseRepositoryInterface
 		return $this->model;
 	}
 
-	public function setModel(Vocal $model)
+	public function setModel($model)
 	{
-		$this->model = $model;
+		if(!$model instanceOf Vocal) 
+		{
+			throw new \Exception('Model must be an instanceOf Vocal');
+		} 
+		$this->model = $model;	
 	}
 
 	public function getAll()
