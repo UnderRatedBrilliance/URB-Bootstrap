@@ -90,6 +90,41 @@ Route::get('/testing',function()
 	return $customers->find(35983)->billing_address;
 });
 
+Route::any('/shipworkstest',function()
+{
+	$allInput = Request::getContent();
+
+	$xml = simplexml_load_string($allInput);
+	$json = json_encode($xml);
+	$array = json_decode($json,TRUE);
+
+	Cache::forever('last_sw_request', $array);
+	//Log::info($json);
+	$import = App::make('URB\Import\Import');
+
+$import_hash = md5($array['Customer']['Order']['Number'].$array['Customer']['Order']['Date']);
+if(!$import->where('unique_hash',$import_hash)->first())
+{
+	$import->type = 'shipworks_order';
+	$import->raw_json_data = $json;
+	$import->status = false;
+	$import->unique_hash = $import_hash;
+	$import->save();
+	return 'import processed';
+}
+else {
+	Cache::forever('last_sw_request', 'already stored');
+}	
+	
+});
+
+Route::any('/lastswrequest',function()
+{
+	return Cache::get('last_sw_request');
+	
+});
+
+Route::controller('/import','ImportController');
 
 /*//////////////////////////////////////////////////////////////////////////
 	Extending FrozenNode/Administrator Routes

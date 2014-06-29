@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-class CreateOrderItemsTable extends Migration {
+class CreateOrderItemTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,11 +12,9 @@ class CreateOrderItemsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('order_items', function(Blueprint $table)
+		Schema::create('order_item', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('order_id')->unsigned();
-			$table->integer('item_id')->unsigned();
 			$table->string('shipworks_order_id');
 			$table->string('name');
 			$table->string('sku');
@@ -26,11 +24,8 @@ class CreateOrderItemsTable extends Migration {
 			$table->decimal('total',6,2);
 			$table->boolean('product_mapped');
 			$table->foreign('shipworks_order_id')->references('shipworks_order_id')->on('orders');
-			$table->foreign('order_id')->references('id')->on('orders');
-			$table->foreign('item_id')->references('id')->on('items');
 		});
 	}
-
 
 	/**
 	 * Reverse the migrations.
@@ -39,7 +34,7 @@ class CreateOrderItemsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('order_items');
+		Schema::drop('order_item');
 	}
 
 }
