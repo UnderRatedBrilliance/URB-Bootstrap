@@ -71,3 +71,28 @@ Route::group(array('prefix' => Config::get('administrator::administrator.uri'), 
 			'uses' => 'URB\Admin\Controllers\UrbAdminController@showFull'
 		));
 });
+
+Route::get('/customquery', function()
+{
+	$orders = App::make('URB\Orders\Orders');
+
+	$dataExport =  $orders->select(array(
+		//DB::raw('DATE(`order_date`) as `date`'),
+		DB::raw('YEAR(`order_date`) as `year`'),
+		DB::raw('MONTHNAME(`order_date`) as `month`'),
+		DB::raw('Count(*) as `count`'),
+		DB::raw("SUM(CASE WHEN order_source = 'Magento' THEN 1 ELSE 0 END) as 'Magento Orders'"),
+		DB::raw("SUM(CASE WHEN order_source = 'Amazon' THEN 1 ELSE 0 END) as 'Amazon Orders'"),
+		DB::raw("SUM(CASE WHEN order_source = 'eBay' THEN 1 ELSE 0 END) as 'eBay Orders'")
+		))
+	->groupBy('month')
+	->orderBy('month','DESC')
+	->get();
+
+	$dataExport = $dataExport->toArray();
+	
+	
+	CSV::with($dataExport)->put(storage_path().'/downloads/data_export.csv','w+'); 
+	return Response::download(storage_path().'/downloads/data_export.csv');
+
+});

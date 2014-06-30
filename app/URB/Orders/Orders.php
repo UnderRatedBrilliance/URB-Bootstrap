@@ -80,8 +80,16 @@ class Orders extends VocalEntity
 	Model Public Methods
 	//////////////////////////////////////////////////////////////////////////*/		
 	
+	public function removeAppends()
+	{
+		$this->appends = array();
+		return $this;
+	}
 
-	
+	public function getAppends()
+	{
+		return $this->appends;
+	}
 
 	/*//////////////////////////////////////////////////////////////////////////
 	Custom Virtual Attributes that are appended to the model

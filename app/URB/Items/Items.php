@@ -19,7 +19,7 @@ class Items extends VocalEntity
 	protected $softDelete = true;
 
 	//Apends properties to toString and toJson output that do not have corresponding columns
-	protected $appends = array('sold_in_7','sold_in_14','sold_in_30','sold_in_90','sold_in_180','sold_in_year','sold_all_time');
+	protected $appends = array('sold_in_7','sold_in_14','sold_in_30','sold_in_90','sold_in_180','sold_in_year','sold_all_time','totalRevenue');
     
 	 /**
 	* Attributes that are fillable by massassignment
@@ -185,5 +185,17 @@ class Items extends VocalEntity
 	{
 		return $this->howManySoldIn(0);
 	}
+
+	public function getTotalRevenueAttribute()
+	{
+		return $this->itemsSold()->whereHas('order', function($q)
+			{
+				$q->where('status',1);
+			})->sum('total');
+	}
 	
+	public function getCurrentPriceAttribute()
+	{
+		return $this->itemsSold()->orderBy('id', 'desc')->first()->unit_price;
+	}
 }
