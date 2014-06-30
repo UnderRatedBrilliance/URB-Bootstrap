@@ -18,6 +18,14 @@ class Orders extends VocalEntity
 	*/
 	protected $softDelete = false;
 
+	/**
+	* Timestamps Enabled for this model. 
+	*
+	* @var boolean
+	*/
+	public $timestamps = false;
+
+
 	//Apends properties to toString and toJson output that do not have corresponding columns
 	protected $appends = array('shipping_address','billing_address');
     

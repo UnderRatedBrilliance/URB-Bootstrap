@@ -2,14 +2,14 @@
 
 use URB\Core\VocalEntity;
 
-class OrderItems extends VocalEntity
+class ReportsData extends VocalEntity
 {
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'order_item';
+	protected $table = 'reports_data';
 
 	/**
 	* Soft Deletes Enabled for this model. 
@@ -23,7 +23,7 @@ class OrderItems extends VocalEntity
 	*
 	* @var boolean
 	*/
-	public $timestamps = false;
+	public $timestamps = true;
 	
 	//Apends properties to toString and toJson output that do not have corresponding columns
 	protected $appends = array();
@@ -45,21 +45,8 @@ class OrderItems extends VocalEntity
 	/*//////////////////////////////////////////////////////////////////////////
 	Model Relationships
 	//////////////////////////////////////////////////////////////////////////*/
-	public function items() 
-	{
-		return $this->hasMany('OrderItem');
-	}
-
-	public function customer() 
-	{
-		$this->belongsTo('Customers','customers_id');
-	}
 	
-	public function order() 
-	{
-		return $this->belongsTo('URB\Orders\Orders');
-	}
-
+	
 	/*//////////////////////////////////////////////////////////////////////////
 	Model Query Scopes
 	//////////////////////////////////////////////////////////////////////////*/

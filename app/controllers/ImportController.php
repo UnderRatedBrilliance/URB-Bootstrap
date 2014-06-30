@@ -35,7 +35,25 @@ class ImportController extends BaseController {
 
 	public function getProcessImport($type)
 	{
-		return $type;
+		$processor = App::make("URB\Import\ImportProcessors\\".$type."Processor");
+
+		$data = App::make("URB\Import\Import")->where('status',0)
+		->where('type',snake_case($type))
+		->chunk(200, function($importData) use ($processor){
+			foreach ($importData as $data) {
+
+				$status = $processor->process($data);
+
+				if(!$status)
+				{
+					echo '<br/><br/>Import could not be processed for ID '.$data->id .'<br/>';
+
+				}
+			}
+		});
+
+
+		
 	}
 
 // Get Request Content 

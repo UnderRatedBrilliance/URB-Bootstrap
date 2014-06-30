@@ -19,6 +19,7 @@ class CreateImportTable extends Migration {
 			$table->binary('raw_json_data');
 			$table->boolean('status');
 			$table->string('unique_hash')->unique();
+			$table->text('errors');
 			$table->timestamps();
 		});
 	}

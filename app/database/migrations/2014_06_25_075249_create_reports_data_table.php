@@ -12,9 +12,13 @@ class CreateItemReportsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('item_reports', function(Blueprint $table)
+		Schema::create('reports_data', function(Blueprint $table)
 		{
 			$table->increments('id');
+			$table->string('name');
+			$table->string('type');
+			$table->integer('entity_id');
+			$table->string('value');
 			$table->timestamps();
 		});
 	}
@@ -27,7 +31,7 @@ class CreateItemReportsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('item_reports');
+		Schema::drop('reports_data');
 	}
 
 }
